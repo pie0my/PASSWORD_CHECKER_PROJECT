@@ -1,5 +1,6 @@
 import requests
 import hashlib
+import sys
 
 
 def request_api_data(query_char):
@@ -16,7 +17,9 @@ def request_api_data(query_char):
 def get_password_leaks_count(hashes, hash_to_check):
     hashes = (line.split(':') for line in hashes.text.splitlines())
     for h, count in hashes:
-        print(h, count)
+        if h == hash_to_check:
+            return count
+    return 0
 
 
 def pwned_api_checker(password):
@@ -24,12 +27,22 @@ def pwned_api_checker(password):
     # precisamos apenas dos 5 primeiros números quando queremos uma verificação de senha
     primeiros_5, resto = sha1password[:5], sha1password[5:]
     response = request_api_data(primeiros_5)
-    print(response)
     return get_password_leaks_count(response, resto)
 
 # lembrar de improtar o hashlib, caso duvida ler documentação
 # checando a senha se ela existir na resposta do API
 # em caso de duvida, ler sobre HASH
+# resto (tail em ingles) é a parte da senha que ninguém tem
 
 
-pwned_api_checker('123')
+def main(args):
+    for password in args:
+        count = pwned_api_checker(password)
+        if count:
+            print(
+                f'{password} foi encontrado {count} vezes, você deveria trocar a senha')
+    else:
+        print(f'{password} não foi encontrado, boa senha')
+
+
+main(sys.argv[1:])
