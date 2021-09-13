@@ -41,8 +41,10 @@ def main(args):
         if count:
             print(
                 f'{password} foi encontrado {count} vezes, você deveria trocar a senha')
-    else:
-        print(f'{password} não foi encontrado, boa senha')
+        else:
+            print(f'{password} não foi encontrado, boa senha')
+    return 'feito'
 
 
-main(sys.argv[1:])
+if __name__ == '__main__':
+    sys.exit(main(sys.argv[1:]))
